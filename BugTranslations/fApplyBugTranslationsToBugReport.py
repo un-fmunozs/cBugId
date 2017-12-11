@@ -17,6 +17,7 @@ from SlashGS import aoBugTranslations as aoBugTranslations_SlashGS;
 from V8 import aoBugTranslations as aoBugTranslations_V8;
 from verifier_dll import aoBugTranslations as aoBugTranslations_verifier_dll;
 from wil import aoBugTranslations as aoBugTranslations_wil;
+from java import aoBugTranslations as aoBugTranslations_java;
 
 aoBugTranslations = [];
 for aoBugTranslations_X in [
@@ -39,6 +40,7 @@ for aoBugTranslations_X in [
   aoBugTranslations_V8,
   aoBugTranslations_verifier_dll,
   aoBugTranslations_wil,
+  aoBugTranslations_java
 ]:
   aoBugTranslations += aoBugTranslations_X;
 
