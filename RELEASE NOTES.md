@@ -1,3 +1,78 @@
+2017-12-21
+==========
+New features
+------------
++ `bIgnoreFirstChanceNULLPointerAccessViolations` in `dxConfig.py` allows you
+  to tell cBugId to ignore all first-chance NULL pointer access violations.
+  This is useful when you are debugging an application that triggers NULL
+  pointers on purpose, and handles them correctly, but does not have debug
+  symbols. Lack of debug symbols prevents you from creating a bug translation
+  to ignore these exceptions, but this setting can allow you to do so without
+  also ignoring unhandled NULL pointers.
+
+2017-12-18
+==========
+New or changed features
+-----------------------
++ Callback functions are no longer provided as arguments to the constructor,
+  but can be registered by calling the `fAddEventCallback` of a `cBugId`
+  instance. This means you can add more than one function for a specific event.
+  A list of possible events you can add callbacks for can be found in 
+  `cCdbWrapper.py`, specifically `cCdbWrapper.dafEventCallbacks_by_sEventName`
+  is a dict that is used to map event names to a list of event callback
+  functions.
++ New processes are started using Windows API calls directly, rather than by
+  using cdb commands. This allows cBugId to distinguish between cdb and
+  application stdout/sterr output reliably. It reduces the chances of
+  misinterpreting cdb output.
++ cBugId constructor has a new argument `uMaximumNumberOfBugs`. Providing a
+  value larger than 1 turns on "collateral" bug handling: certain access
+  violation bugs are reported, but rather than terminating the application,
+  cBugId will attempt to "fake" that the instruction that caused this exception
+  succeeded, providing a tainted value (0x41414141...) as the read result if
+  applicable. This may be useful in proving that a particular vulnerability is
+  theoretically exploitable or not, as the effect of control over the data that
+  would have been read or written becomes more clear.
+  To implement this feature in 32-bit processes, a memory region is reserved in
+  every such process at 0x41410000-0x41420000, to prevent the tainted value
+  from pointing to valid memory.
++ Access violation handling has been completely overhauled to make it more
+  structured and allow "collateral" bug handling.
++ `uMaxMemoryDumpSize` was increased from 0x400 to 0x1000
+
+BugId changes
+-------------
++ Improved bug translations for various things.
+
+Internal changes
+----------------
++ Internal objects are hidden in cBugReport instances.
++ Updates of mWindowsAPI let to some changes in the code.
++ Use of events has cleaned up the code used to make the callbacks everywhere.
++ Cleanup code was improved.
++ List module cdb output processing was improved.
++ Tests have been improved.
++ Tests results are no longer stored in github.
+
+2017-11-29
+==========
+BugId changes
+-------------
++ Improved `wil` bug translations
+
+Internal changes
+----------------
++ Reworked threading system to track all threads so we can find any threads
+  do not terminate as expected.
++ Tests now always write HTML report when requested.
++ Module symbols are loaded "noisy" for debugging failures to load them.
++ `mWindowsAPI` is used for getting values for exception code defines.
++ `mWindowsDefines` has been modified into `cWindowsStatusOrError`; this offers
+  slight improved naming for clarity. It also no longer exports any exception
+  code defines, as `mWindowsAPI` is now used for these. All calls to
+  `mWindowsDefines.doWindowsDefines_by_uValue.get` have been replaced by calls
+  to `cWindowsStatusOrError.foGetForCode()`.
+
 2017-11-24
 ==========
 Improvements
